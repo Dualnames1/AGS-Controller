@@ -177,10 +177,7 @@ void Controller_Close(Controller* con)
 
 int Controller_Plugged(Controller* con)
 {
-	SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-	}
+	SDL_JoystickUpdate();
 	if (!sdlController)
 	{
 		return 0;
@@ -194,10 +191,7 @@ int Controller_Plugged(Controller* con)
 int Controller_GetAxis(Controller* con, int axis)
 {
 	if (axis>con->axes_count || axis<0 || !sdlController) { return 0; }
-	SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-	}
+	SDL_JoystickUpdate();
 	ControllerInAGS.axes[axis]=SDL_JoystickGetAxis(sdlController,axis);
 	return ControllerInAGS.axes[axis];
 }
@@ -208,10 +202,7 @@ int Controller_GetPOV(Controller* con)
 	{
 		return -1;
 	}
-	SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-	}
+	SDL_JoystickUpdate();
 	int setHat=SDL_JoystickGetHat(sdlController,0);
 
 	if (setHat == SDL_HAT_CENTERED)	ControllerInAGS.pov = 0;
@@ -233,11 +224,7 @@ int Controller_IsButtonDown(Controller* con, int butt)
 	{
 		return 0;
 	}
-
-	SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-	}
+	SDL_JoystickUpdate();
 	if (butt < ControllerInAGS.button_count)
 	{
 		ControllerInAGS.buttstate[butt]=SDL_JoystickGetButton(sdlController,butt);
@@ -253,14 +240,7 @@ int Controller_IsButtonDownOnce(Controller* con, int butt)
 	{
 		return 0;
 	}
-
-	
-
-	SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-	}
-
+	SDL_JoystickUpdate();
 	if (ControllerInAGS.isHeld[butt])
 	{
 	}
