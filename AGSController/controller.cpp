@@ -196,6 +196,7 @@ int Controller_GetAxis(Controller* con, int axis)
 	return ControllerInAGS.axes[axis];
 }
 
+
 int Controller_GetPOV(Controller* con)
 {
 	if (!sdlController)
@@ -234,6 +235,37 @@ int Controller_IsButtonDown(Controller* con, int butt)
 	return ControllerInAGS.buttstate[butt];
 }
 
+
+int Controller_PressAnyKey(Controller*con)
+{
+	//SDL_JoystickUpdate();
+	int butt=0;
+	while (butt < 32)//ControllerInAGS.button_count)
+	{
+		int getButtonState=Controller_IsButtonDown(con,butt);//SDL_JoystickGetButton(sdlController,butt);
+		if (getButtonState==1)
+		{
+			ControllerInAGS.buttstate[butt]=getButtonState;
+			return butt;
+		}
+		butt++;
+	}
+	return -1;
+}
+
+
+int Controller_BatteryStatus(Controller* con)
+{
+	if (!sdlController) 
+	{
+		return 0;
+	}
+	SDL_JoystickUpdate();
+	return SDL_JoystickCurrentPowerLevel(sdlController);
+}
+
+
+
 int Controller_IsButtonDownOnce(Controller* con, int butt)
 {
 	if (butt>32 || butt<0 || !sdlController) 
@@ -270,6 +302,9 @@ void Controller_Rumble(Controller* con,int left,int right,int duration)//duratio
 	}
 }
 
+
+
+
 const char* Controller_GetName(Controller* con)
 {
 	if (!Controller_Plugged(con)) {
@@ -285,7 +320,7 @@ const char* Controller_GetName(Controller* con)
 
 ///
 
-void Update()
+void Controller_Update()
 {
 	if (sdlController)
 	{
@@ -302,27 +337,27 @@ void Update()
 	}
 	if (sdlGameController!=NULL)
 	{
-	bool up  = SDL_GameControllerGetButton(sdlGameController, SDL_CONTROLLER_BUTTON_DPAD_UP);
-	bool down= SDL_GameControllerGetButton(sdlGameController, SDL_CONTROLLER_BUTTON_DPAD_DOWN);
-    bool left= SDL_GameControllerGetButton(sdlGameController, SDL_CONTROLLER_BUTTON_DPAD_LEFT);
-    bool right = SDL_GameControllerGetButton(sdlGameController, SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
+	int up  = SDL_GameControllerGetButton(sdlGameController, SDL_CONTROLLER_BUTTON_DPAD_UP);
+	int down= SDL_GameControllerGetButton(sdlGameController, SDL_CONTROLLER_BUTTON_DPAD_DOWN);
+    int left= SDL_GameControllerGetButton(sdlGameController, SDL_CONTROLLER_BUTTON_DPAD_LEFT);
+    int right = SDL_GameControllerGetButton(sdlGameController, SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
 
-	if (up)
+	if (up==1)
 	{
-		if (left) ControllerInAGS.pov = 2 ^ 11;
-		else if (right) ControllerInAGS.pov = 2 ^ 1;
+		if (left==1) ControllerInAGS.pov = 2 ^ 11;
+		else if (right==1) ControllerInAGS.pov = 2 ^ 1;
 		else ControllerInAGS.pov = 2 ^ 3;
 	}
-	else if (down)
+	else if (down==1)
 	{
-		if (left) ControllerInAGS.pov = 2 ^ 14;
-		else if (right) ControllerInAGS.pov = 2 ^ 4;
+		if (left==1) ControllerInAGS.pov = 2 ^ 14;
+		else if (right==1) ControllerInAGS.pov = 2 ^ 4;
 		else ControllerInAGS.pov = 2 ^ 6;
 	}
 	else 
 	{
-		if (left) ControllerInAGS.pov = 2 ^ 10;
-		else if (right) ControllerInAGS.pov = 2 ^ 0;
+		if (left==1) ControllerInAGS.pov = 2 ^ 10;
+		else if (right==1) ControllerInAGS.pov = 2 ^ 0;
 		else ControllerInAGS.pov = 0;
 	}
 
@@ -357,6 +392,9 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("Controller::GetName^0", reinterpret_cast<void *>(Controller_GetName));
 	engine->RegisterScriptFunction("Controller::Rumble", (void*)&Controller_Rumble);
 	engine->RegisterScriptFunction("Controller::IsButtonDownOnce",(void*)&Controller_IsButtonDownOnce);
+	engine->RegisterScriptFunction("Controller::PressAnyKey",(void*)&Controller_PressAnyKey);
+    engine->RegisterScriptFunction("Controller::BatteryStatus",(void*)&Controller_BatteryStatus);
+	
 	
  	
 	engine->AddManagedObjectReader(constructname, &conread);
@@ -381,7 +419,7 @@ int AGS_EngineOnEvent(int event, int data)
 {
   if (event == AGSE_PREGUIDRAW)
   {
-	 Update();
+	 Controller_Update();
   }  
   else if (event == AGSE_RESTOREGAME)
   {
@@ -475,6 +513,12 @@ const char* scriptHeader =
 "\r\n"
 "/// Returns true when the specified button is currently down. (0-31)\r\n"
 "import bool IsButtonDown (int button);\r\n"
+"\r\n"
+"/// Returns the first button the player hits on the controller, otherwise returns -1. (0-31)\r\n"
+"import int PressAnyKey();\r\n"
+"\r\n"
+"/// Returns the status of the controller battery. (-1 - 5) UNKNOWN = -1, LESS THAN 5% = 0, LESS THAN 20% = 1, LESS THAN 70% = 2, 100% = 3, WIRED = 4, MAX = 5 \r\n"
+"import int BatteryStatus();\r\n"
 "\r\n"
 "/// Returns true when the specified button is currently down (single press). (0-31)\r\n"
 "import bool IsButtonDownOnce(int button);\r\n"
