@@ -1,0 +1,83 @@
+# C/C++ with GCC
+# Build your C/C++ project with GCC using make.
+# Add steps that publish test results, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/c-cpp/gcc
+
+trigger:
+  branches:
+    include:
+      - refs/heads/*
+      - refs/tags/*
+
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-16.04'
+    mac:
+      imageName: 'macos-10.13'
+    windows:
+      imageName: 'vs2017-win2016'
+
+pool:
+  vmImage: $(imageName)
+
+steps:
+# Linux
+- bash: |
+    cd AGSController
+    make
+  condition: eq( variables['Agent.OS'], 'Linux' )
+  displayName: 'make'
+
+- task: CopyFiles@2
+  condition: eq( variables['Agent.OS'], 'Linux' )
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)/AGSController'
+    contents: 'libagscontroller.so'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
+# macOS
+- bash: |
+    cd AGSController
+    make
+  condition: eq( variables['Agent.OS'], 'Darwin' )
+  displayName: 'make'
+
+- task: CopyFiles@2
+  condition: eq( variables['Agent.OS'], 'Darwin' )
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)/AGSController'
+    contents: 'libagscontroller.dylib'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
+# Windows
+- task: VSBuild@1
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  inputs:
+    solution: 'AGSController\vs2017\AGSController.sln' 
+    platform: win32
+    configuration: Release
+
+- task: CopyFiles@2
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )   
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)/AGSController/vs2017/Release'
+    contents: 'AGSController.dll'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
+- bash: |
+    echo "##vso[task.setvariable variable=tagname]$(git describe --tags $(git rev-list --tags --max-count=1))"
+# Upload to Github Release
+- task: GithubRelease@0 
+  displayName: 'Create GitHub Release'  
+  inputs:
+    tagSource: 'auto'
+    tag: $(tagname)
+    assetUploadMode: 'replace' 
+    action: 'edit' 
+    gitHubConnection: agsnormalmaps
+    repositoryName: ericoporto/AGSController           
+    assets: |
+         $(Build.ArtifactStagingDirectory)/*.dll
+         $(Build.ArtifactStagingDirectory)/*.so
+         $(Build.ArtifactStagingDirectory)/*.dylib
