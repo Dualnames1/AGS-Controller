@@ -1,5 +1,7 @@
 # AGS-Controller
 
+[![Build Status](https://dev.azure.com/ericoporto/agscontroller/_apis/build/status/ericoporto.AGS-Controller?branchName=master)](https://dev.azure.com/ericoporto/agscontroller/_build/latest?definitionId=5&branchName=master)
+
 Created by Dualnames
 
 [AGS Forums Topic](https://www.adventuregamestudio.co.uk/forums/index.php?topic=57129.0)
