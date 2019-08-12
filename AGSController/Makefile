@@ -1,17 +1,31 @@
 UNAME := $(shell uname)
 
+
+
 INCDIR = ../../Engine ../../Common
 LIBDIR =
 CC = gcc
 CXX = g++
-CFLAGS = -fPIC -fvisibility=hidden -O2 -g -Wall
 LIBS = -lm -lstdc++
 
 ifeq ($(UNAME), Darwin)
-TARGET = libagsflashlight.dylib
+
+LIBS    += -framework SDL2
+SDL_LIB = -F/Library/Frameworks
+SDL_INCLUDE = -F/Library/Frameworks -I/Library/Frameworks/SDL2.framework/Headers/
+
+CFLAGS = -fPIC -fvisibility=hidden -O2 -g -Wall $(SDL_INCLUDE)
+LDFLAGS = $(SDL_LIB)
+TARGET = libagscontroller.dylib
 CFLAGS += -DMAC_VERSION
 else
-TARGET = libagsflashlight.so
+
+SDL_LIB = `sdl2-config --libs`
+SDL_INCLUDE = `sdl2-config --cflags`
+
+CFLAGS = -fPIC -fvisibility=hidden -O2 -g -Wall $(SDL_INCLUDE)
+LDFLAGS = $(SDL_LIB)
+TARGET = libagscontroller.so
 CFLAGS += -DLINUX_VERSION
 endif
 
