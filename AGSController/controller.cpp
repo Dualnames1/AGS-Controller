@@ -318,6 +318,11 @@ const char* Controller_GetName(Controller* con)
 	}
 }
 
+void ClickMouse(int button)
+{
+	engine->SimulateMouseClick(button);
+}
+
 ///
 
 void Controller_Update()
@@ -394,6 +399,8 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("Controller::IsButtonDownOnce",(void*)&Controller_IsButtonDownOnce);
 	engine->RegisterScriptFunction("Controller::PressAnyKey",(void*)&Controller_PressAnyKey);
     engine->RegisterScriptFunction("Controller::BatteryStatus",(void*)&Controller_BatteryStatus);
+	engine->RegisterScriptFunction("ClickMouse",(void*)&ClickMouse);
+
 	
 	
  	
@@ -468,6 +475,9 @@ LPCSTR AGS_GetPluginName(void)
 }
 
 const char* scriptHeader =
+"/// Does a single mouse click. \r\n"
+"import void ClickMouse(int button);\r\n"
+"\r\n"
 "/// Returns the number of gamecontrollers found\r\n"
 "import int ControllerCount (); \r\n"
 "\r\n"
