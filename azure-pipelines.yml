@@ -105,8 +105,8 @@ steps:
     tag: 'Current version'
     assetUploadMode: 'replace' 
     action: 'edit'
-    gitHubConnection: agscontroller
-    repositoryName: Dualnames1/AGSController           
+    gitHubConnection: agswaves
+    repositoryName: Dualnames1/AGS-Controller           
     assets: |
          $(Build.ArtifactStagingDirectory)/*.dll
          $(Build.ArtifactStagingDirectory)/*.so
