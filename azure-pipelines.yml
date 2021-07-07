@@ -99,14 +99,14 @@ steps:
     echo "##vso[task.setvariable variable=tagname]$(git describe --tags $(git rev-list --tags --max-count=1))"
 # Upload to Github Release
 - task: GithubRelease@0 
-  displayName: 'Create GitHub Release'  
+  displayName: 'Edit GitHub Release'  
   inputs:
+    gitHubConnection: agswaves
+    repositoryName: Dualnames1/AGS-Controller 
     tagSource: 'auto'
     tag: 'Current version'
     assetUploadMode: 'replace' 
-    action: 'edit'
-    gitHubConnection: agswaves
-    repositoryName: Dualnames1/AGS-Controller           
+    action: 'edit'              
     assets: |
          $(Build.ArtifactStagingDirectory)/*.dll
          $(Build.ArtifactStagingDirectory)/*.so
