@@ -104,7 +104,7 @@ steps:
     gitHubConnection: agswaves
     repositoryName: Dualnames1/AGS-Controller 
     tagSource: 'auto'
-    tag: 'Current version'
+    tag: 'Current_Version'
     assetUploadMode: 'replace' 
     action: 'edit'              
     assets: |
