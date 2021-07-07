@@ -24,9 +24,9 @@ pool:
 steps:
 # Linux
 - bash: |
-    curl -O https://www.libsdl.org/release/SDL2-2.0.9.tar.gz
-    tar -xzf SDL2-2.0.9.tar.gz
-    pushd SDL2-2.0.9/ 
+    curl -O https://www.libsdl.org/release/SDL2-2.0.12.tar.gz
+    tar -xzf SDL2-2.0.12.tar.gz
+    pushd SDL2-2.0.12/ 
     mkdir $HOME/SDL
     ./configure --prefix=$HOME/SDL
     make
@@ -48,8 +48,8 @@ steps:
 # macOS
 - bash: |
     pushd ~
-    curl -O https://www.libsdl.org/release/SDL2-2.0.9.dmg
-    hdiutil attach SDL2-2.0.9.dmg
+    curl -O https://www.libsdl.org/release/SDL2-2.0.12.dmg
+    hdiutil attach SDL2-2.0.12.dmg
     sudo cp -a /Volumes/SDL2/SDL2.framework /Library/Frameworks/
     pushd /Library/Frameworks/SDL2.framework/
     codesign -f -s - SDL2
@@ -70,14 +70,14 @@ steps:
 # Windows
 
 - bash: |
-    curl -O https://www.libsdl.org/release/SDL2-devel-2.0.9-VC.zip
+    curl -O https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: 'downloadSDL'
 
 - powershell: |
     mkdir C:\Dev
-    7z x -y "SDL2-devel-2.0.9-VC.zip" -o"C:\Dev"
-    Rename-Item C:\Dev\SDL2-2.0.9 C:\Dev\SDL2
+    7z x -y "SDL2-devel-2.0.12-VC.zip" -o"C:\Dev"
+    Rename-Item C:\Dev\SDL2-2.0.12 C:\Dev\SDL2
   condition: eq( variables['Agent.OS'], 'Windows_NT' )   
   displayName: 'extractSDL'
 
@@ -92,7 +92,7 @@ steps:
   condition: eq( variables['Agent.OS'], 'Windows_NT' )   
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)/AGSController/vs2017/Release'
-    contents: '*.dll' #AGSController
+    contents: 'AGSController.dll' #
     targetFolder: $(Build.ArtifactStagingDirectory)
 
 - bash: |
