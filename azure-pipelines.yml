@@ -102,11 +102,11 @@ steps:
   displayName: 'Create GitHub Release'  
   inputs:
     tagSource: 'auto'
-    tag: $(tagname)
+    tag: 'Current version'
     assetUploadMode: 'replace' 
-    action: 'edit' 
+    action: 'edit'
     gitHubConnection: agscontroller
-    repositoryName: ericoporto/AGS-Controller           
+    repositoryName: Dualnames1/AGSController           
     assets: |
          $(Build.ArtifactStagingDirectory)/*.dll
          $(Build.ArtifactStagingDirectory)/*.so
