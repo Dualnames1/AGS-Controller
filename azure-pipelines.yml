@@ -92,7 +92,7 @@ steps:
   condition: eq( variables['Agent.OS'], 'Windows_NT' )   
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)/AGSController/vs2017/Release'
-    contents: 'AGSController.dll'
+    contents: '*.dll' #AGSController
     targetFolder: $(Build.ArtifactStagingDirectory)
 
 - bash: |
